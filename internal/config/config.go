@@ -7,19 +7,18 @@ import (
 )
 
 type Config struct {
-	DBURL  string
-	DBPASS string
+	DBURL string
+	PORT  string
 }
 
 func Load() (*Config, error) {
 	conf := &Config{
-		DBURL:  os.Getenv("DB_URL"),
-		DBPASS: os.Getenv("DB_PASS"),
+		DBURL: os.Getenv("DB_URL"),
+		PORT:  os.Getenv("PORT"),
 	}
 
 	required := map[string]string{
-		"DBURL":  conf.DBURL,
-		"DBPASS": conf.DBPASS,
+		"DBURL": conf.DBURL,
 	}
 
 	var missing []string
