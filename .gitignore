@@ -21,4 +21,4 @@ bin/
 
 .vim/
 .nvim/
-
+.db_env
