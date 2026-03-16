@@ -32,7 +32,7 @@ COPY --from=builder /app/blog-api .
 
 USER nobody:nobody
 
-EXPOSE 5000
+EXPOSE 8080
 
 ENTRYPOINT [ "./blog-api" ]
 
