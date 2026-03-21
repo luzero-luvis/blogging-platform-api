@@ -19,7 +19,7 @@ func (r *Postrepository) Create(post *model.Post) error {
 	tagJson, _ := json.Marshal(post.Tags)
 
 	querry := `
-	 INSERT INTO posts(title,content,catagory,tags)
+	 INSERT INTO posts(title,content,category,tags)
 	 VALUES ($1, $2, $3, $4)
 	 RETURNING id, created_at ,updated_at
 	`

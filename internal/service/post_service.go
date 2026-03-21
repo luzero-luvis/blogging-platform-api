@@ -36,5 +36,10 @@ func (s *PostService) Create(req *model.CreatePostRequest) (*model.Post, error) 
 		Tags:     req.Tags,
 	}
 
+	err := s.repo.Create(post)
+	if err != nil {
+		return nil, err
+	}
+
 	return post, nil
 }
