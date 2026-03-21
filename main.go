@@ -1,15 +1,17 @@
 package main
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
 
 	"blogging-platform-api/internal/config"
 	"blogging-platform-api/internal/database"
+	"blogging-platform-api/internal/handler"
 	"blogging-platform-api/internal/logger"
 	"blogging-platform-api/internal/middleware"
+	"blogging-platform-api/internal/repository"
+	"blogging-platform-api/internal/service"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/godotenv/godotenv"
@@ -26,7 +28,6 @@ func main() {
 	if err != nil {
 		os.Exit(1)
 	}
-	_ = conf
 
 	// connnect to database
 	db, err := database.Connect(conf.DBURL)
@@ -36,6 +37,10 @@ func main() {
 		defer db.Close()
 		slog.Info("connected to database")
 	}
+
+	repo := repository.NewPostRepository(db)
+	svc := service.NewPostService(repo)
+	h := handler.NewPostHandler(svc)
 
 	r := chi.NewRouter()
 
@@ -50,6 +55,7 @@ func main() {
 		w.Write([]byte("ok"))
 	})
 
+	r.Post("/posts", h.Create)
 	// port
 
 	port := conf.PORT
@@ -61,6 +67,4 @@ func main() {
 	if err := http.ListenAndServe(":"+port, r); err != nil {
 		slog.Error("server failed to start", "error", err)
 	}
-
-	fmt.Println("server is runnign on port 8000")
 }
