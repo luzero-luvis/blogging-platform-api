@@ -32,14 +32,13 @@ func Loggingmiddleware(next http.Handler) http.Handler {
 			"agent", r.UserAgent(),
 		)
 
-		duration := time.Since(start)
-
 		next.ServeHTTP(ww, r)
 
 		slog.Info("requst completed",
 			"method", r.Method,
 			"path", r.URL.Path,
-			"duration", duration.Microseconds(),
+			"status", ww.statusCode,
+			"duration", time.Since(start).String(),
 		)
 	})
 }
