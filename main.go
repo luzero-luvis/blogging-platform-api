@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log/slog"
 	"net/http"
 	"os"
@@ -48,11 +49,25 @@ func main() {
 	r.Use(middleware.Loggingmiddleware)
 
 	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
-		if db == nil {
+		if db != nil {
 			w.WriteHeader(http.StatusServiceUnavailable)
-			w.Write([]byte("postgres is unavailble"))
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"success": false,
+				"message": "service is not healthy",
+				"data": map[string]bool{
+					"postgress": false,
+				},
+			})
 		}
-		w.Write([]byte("ok"))
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"success": true,
+			"message": "service is healthy",
+			"data": map[string]bool{
+				"postgress": true,
+			},
+		})
 	})
 
 	r.Post("/posts", h.Create)
