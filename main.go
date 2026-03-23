@@ -49,8 +49,7 @@ func main() {
 	r.Use(middleware.Loggingmiddleware)
 
 	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
-		if db != nil {
-			w.WriteHeader(http.StatusServiceUnavailable)
+		if db == nil || db.Ping() != nil {
 			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(map[string]interface{}{
 				"success": false,
@@ -59,6 +58,7 @@ func main() {
 					"postgress": false,
 				},
 			})
+			return
 		}
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
