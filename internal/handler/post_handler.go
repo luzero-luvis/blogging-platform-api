@@ -38,3 +38,19 @@ func (h *PostHandler) Create(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(201)
 	json.NewEncoder(w).Encode(post)
 }
+
+func (h *PostHandler) GetAll(w http.ResponseWriter, r *http.Request) {
+	posts, err := h.service.GetAll()
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(500)
+		json.NewEncoder(w).Encode(map[string]string{"error": "failed to get post"})
+		return
+	}
+	if posts == nil {
+		posts = []model.Post{}
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	json.NewEncoder(w).Encode(posts)
+}
