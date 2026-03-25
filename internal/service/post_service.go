@@ -43,3 +43,11 @@ func (s *PostService) Create(req *model.CreatePostRequest) (*model.Post, error) 
 
 	return post, nil
 }
+
+func (s *PostService) GetAll() ([]model.Post, error) {
+	return s.repo.GetAll()
+}
+
+func (s *PostService) GetById(id int) (*model.Post, error) {
+	return s.repo.GetById(id)
+}
