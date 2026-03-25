@@ -54,7 +54,7 @@ func (r *Postrepository) GetById(id int) (*model.Post, error) {
 	var post model.Post
 	var tagJson []byte
 
-	err := r.db.QueryRow("SELECT SELECT  id, title, content, category, tags, created_at,updated_at FROM posts WHERE id = $1", id).Scan(&post.ID, &post.Title, &post.Content, &post.Category, &tagJson, &post.CreatedAt, &post.UpdatedAt)
+	err := r.db.QueryRow("SELECT  id, title, content, category, tags, created_at,updated_at FROM posts WHERE id = $1", id).Scan(&post.ID, &post.Title, &post.Content, &post.Category, &tagJson, &post.CreatedAt, &post.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}
