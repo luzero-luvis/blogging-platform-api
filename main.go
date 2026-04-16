@@ -73,6 +73,7 @@ func main() {
 	r.Post("/posts", h.Create)
 	r.Get("/posts", h.GetAll)
 	r.Get("/posts/{id}", h.GetByID)
+	r.Put("/posts/{id}", h.Put)
 	// port
 
 	port := conf.PORT
