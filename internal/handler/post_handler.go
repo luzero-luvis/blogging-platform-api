@@ -86,3 +86,44 @@ func (h *PostHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 	json.NewEncoder(w).Encode(post)
 }
+
+func (h *PostHandler) Put(w http.ResponseWriter, r *http.Request) {
+	idStr := chi.URLParam(r, "id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		slog.Error("invalid id", "id", idStr)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(400)
+		json.NewEncoder(w).Encode(map[string]string{"error": "invalid id"})
+	}
+
+	var req model.CreatePostRequest
+	err = json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		slog.Error("error getting json", "error", err)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(400)
+		json.NewEncoder(w).Encode(map[string]string{"error": "erro converting to json"})
+	}
+
+	post, err := h.service.Put(id, &req)
+	if err != nil {
+		if err.Error() == "post not found" {
+			slog.Error("no post to update")
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(404)
+			json.NewEncoder(w).Encode(map[string]string{"error": "there is no post"})
+			return
+		}
+		slog.Error(" error updating")
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(400)
+		json.NewEncoder(w).Encode(map[string]string{"error": "error updating post"})
+		return
+	}
+
+	slog.Info("post updated", "id", post.ID)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	json.NewEncoder(w).Encode(post)
+}

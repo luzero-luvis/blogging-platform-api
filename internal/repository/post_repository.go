@@ -3,6 +3,7 @@ package repository
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 
 	"blogging-platform-api/internal/model"
 )
@@ -61,4 +62,21 @@ func (r *Postrepository) GetById(id int) (*model.Post, error) {
 	json.Unmarshal(tagJson, &post.Tags)
 
 	return &post, nil
+}
+
+func (r *Postrepository) Put(post *model.Post) error {
+	tagJson, _ := json.Marshal(post.Tags)
+	query := `
+  UPDATE posts 
+  SET title = $1,content = $2,category = $3,tags = $4,updated_at = NOW()
+	WHERE id = $5
+	RETURNING updated_at,created_at
+	`
+	err := r.db.QueryRow(query, post.Title, post.Content, post.Category, tagJson, post.ID).
+		Scan(&post.UpdatedAt, &post.CreatedAt)
+	if err == sql.ErrNoRows {
+		return fmt.Errorf("post not found")
+	}
+
+	return err
 }
