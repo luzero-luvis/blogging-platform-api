@@ -74,6 +74,7 @@ func main() {
 	r.Get("/posts", h.GetAll)
 	r.Get("/posts/{id}", h.GetByID)
 	r.Put("/posts/{id}", h.Put)
+	r.Delete("/posts/{id}", h.Del)
 	// port
 
 	port := conf.PORT

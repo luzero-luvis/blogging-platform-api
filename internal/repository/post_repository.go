@@ -80,3 +80,15 @@ func (r *Postrepository) Put(post *model.Post) error {
 
 	return err
 }
+
+func (r *Postrepository) Del(id int) error {
+	result, err := r.db.Exec("DELETE FROM posts WHERE id=$1", id)
+	if err != nil {
+		return err
+	}
+	rowAffected, _ := result.RowsAffected()
+	if rowAffected == 0 {
+		return fmt.Errorf("post not found")
+	}
+	return nil
+}

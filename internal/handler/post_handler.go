@@ -127,3 +127,29 @@ func (h *PostHandler) Put(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 	json.NewEncoder(w).Encode(post)
 }
+
+func (h *PostHandler) Del(w http.ResponseWriter, r *http.Request) {
+	idStr := chi.URLParam(r, "id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		slog.Error("invalid id", "id", idStr)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(400)
+		json.NewEncoder(w).Encode(map[string]string{"error": "invalid id"})
+
+	}
+
+	err = h.service.Del(id)
+	if err != nil {
+		slog.Warn("id doesn't exists", "warning", "there is no id")
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(404)
+		json.NewEncoder(w).Encode(map[string]string{"warning": "id doesn't exist"})
+		return
+	}
+
+	slog.Info("data deleted", "id", id)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	json.NewEncoder(w).Encode(map[string]int{"deleted": id})
+}
