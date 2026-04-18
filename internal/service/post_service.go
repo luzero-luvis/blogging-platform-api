@@ -79,3 +79,7 @@ func (s *PostService) Put(id int, req *model.CreatePostRequest) (*model.Post, er
 
 	return post, nil
 }
+
+func (s *PostService) Del(id int) error {
+	return s.repo.Del(id)
+}
